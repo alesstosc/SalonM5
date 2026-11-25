@@ -45,15 +45,18 @@ Requisiti: Node.js 18+ (solo per il dev server; la pagina in sé non ne ha bisog
 Il form `#booking` (sezione "Ask for a chair") invia a **Web3Forms**: gratuito fino a
 250 messaggi/mese, nessun account, nessun backend.
 
-1. Vai su <https://web3forms.com>, inserisci l'email che deve ricevere le prenotazioni
-   e copia l'**Access Key** che ti arriva (formato UUID).
-2. In `index.html` sostituisci il placeholder nel campo nascosto:
+L'Access Key è già configurata in `index.html`:
 
-   ```html
-   <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
-   ```
+```html
+<input type="hidden" name="access_key" value="af80fdac-0118-4ca1-a6e5-e26c1a79a7c0">
+```
 
-3. Fatto. Il primo invio di prova conferma il collegamento.
+Per cambiarne una nuova: <https://web3forms.com> → inserisci l'email che riceve le
+prenotazioni → arriva l'UUID via mail.
+
+> La key è pubblica per natura (sta nel client). Consiglio: nella dashboard Web3Forms
+> attiva **Domain restriction** su `alesstosc.github.io` così nessuno può riusarla da
+> altri siti, e opzionalmente hCaptcha.
 
 Dettagli dell'invio (`assets/js/form.js`):
 
@@ -66,8 +69,9 @@ Dettagli dell'invio (`assets/js/form.js`):
 - honeypot `botcheck` + campi `subject`, `from_name`, `source`;
 - se JavaScript è disattivato il form fa comunque un POST classico a Web3Forms.
 
-Finché la key non è configurata, l'invio mostra un avviso in pagina invece di fallire
-in silenzio.
+Nota sul test in locale: Web3Forms accetta invii dal dominio pubblicato; da
+`http://localhost` la richiesta può essere rifiutata (CORS). Per provare il form usa il
+sito su GitHub Pages o aggiungi il dominio consentito in dashboard.
 
 ### Alternative gratuite
 
