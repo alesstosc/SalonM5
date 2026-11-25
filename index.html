@@ -597,12 +597,15 @@
             </div>
         </div>
         <div class="sm-form bk-wrap">
-            <form id="booking" action="https://formspree.io/f/REPLACE_WITH_FORM_ID" method="POST" class="sm-form bk-form"
+            <form id="booking" action="https://api.web3forms.com/submit" method="POST" class="sm-form bk-form"
+                  data-provider="web3forms"
                   data-success-message="Thank you. We will call or write back within one working day to confirm your chair."
                   data-error-message="Something went wrong. Write to us at test@email.com and we will answer.">
-                <input type="hidden" name="_subject" value="Booking request — Mèche Rouge (salonm5)">
+                <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
+                <input type="hidden" name="subject" value="Booking request — Mèche Rouge (salonm5)">
+                <input type="hidden" name="from_name" value="SalonM5 booking form">
                 <input type="hidden" name="source" value="salonm5.github.io">
-                <input type="text" name="_gotcha" class="bk-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+                <input type="checkbox" name="botcheck" class="bk-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
                 <div class="bk-form__head">
                     <h3 class="bk-form__title sm-fonts-style display-5">ASK FOR A CHAIR</h3>
                     <p class="bk-form__note sm-fonts-style display-7">We confirm by phone or email within one working day.</p>

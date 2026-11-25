@@ -1,26 +1,43 @@
 /**
- * Booking form → Formspree.
+ * Booking form — invio a un endpoint HTTP "form-to-email" senza backend.
  *
- * L'unica cosa da configurare è l'endpoint: l'attributo `action` del form in
- * index.html. Sostituisci REPLACE_WITH_FORM_ID con il tuo id Formspree
- * (https://formspree.io/ → New form → copia l'URL, es. https://formspree.io/f/xyzabcd).
- * Se preferisci tenerlo qui, imposta FORMSPREE_ENDPOINT: vince sull'action.
+ * Provider supportati out of the box:
+ *   - Web3Forms  (default, free 250/mese)  https://api.web3forms.com/submit
+ *   - Formspree  (free 50/mese)            https://formspree.io/f/<id>
+ *   - qualsiasi endpoint che risponda 200/JSON {success:true}
+ *
+ * Configurazione: tutto sta nell'attributo `action` del form in index.html,
+ * più il campo nascosto `access_key` (Web3Forms) o l'id nell'URL (Formspree).
+ * In alternativa imposta ENDPOINT_OVERRIDE qui sotto: vince sull'action.
  */
-const FORMSPREE_ENDPOINT = ''; // es. 'https://formspree.io/f/xyzabcd'
+const ENDPOINT_OVERRIDE = ''; // es. 'https://api.web3forms.com/submit'
 
 (function () {
   const form = document.getElementById('booking');
   if (!form) return;
 
-  const endpoint = (FORMSPREE_ENDPOINT || form.getAttribute('action') || '').trim();
+  const endpoint = (ENDPOINT_OVERRIDE || form.getAttribute('action') || '').trim();
+  const provider = (form.dataset.provider || detectProvider(endpoint)).toLowerCase();
   const button = form.querySelector('[type="submit"]');
   const submitLabel = button ? button.dataset.submitLabel || button.textContent : '';
   const successBox = form.querySelector('[data-form-status="success"]');
   const errorBox = form.querySelector('[data-form-status="error"]');
-  const defaultError = errorBox ? errorBox.textContent : 'Something went wrong.';
+  const defaultError = (errorBox && errorBox.textContent.trim()) || 'Something went wrong.';
   let busy = false;
 
-  const isConfigured = () => endpoint.startsWith('https://formspree.io/f/') && !endpoint.includes('REPLACE_WITH_FORM_ID');
+  function detectProvider(url) {
+    if (/web3forms/i.test(url)) return 'web3forms';
+    if (/formspree/i.test(url)) return 'formspree';
+    return 'generic';
+  }
+
+  function isConfigured() {
+    if (!/^https?:\/\//.test(endpoint)) return false;
+    if (/REPLACE_WITH_FORM_ID|YOUR_WEB3FORMS_ACCESS_KEY|YOUR_/.test(endpoint)) return false;
+    const key = form.querySelector('input[name="access_key"]');
+    if (provider === 'web3forms' && (!key || /YOUR_/.test(key.value))) return false;
+    return true;
+  }
 
   function setBusy(state) {
     busy = state;
@@ -47,6 +64,15 @@ const FORMSPREE_ENDPOINT = ''; // es. 'https://formspree.io/f/xyzabcd'
     box.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
+  function messageFrom(data) {
+    if (!data) return '';
+    if (typeof data.errors === 'object' && data.errors) {
+      const list = Array.isArray(data.errors) ? data.errors : [data.errors];
+      return list.map((e) => (e && (e.message || e.field)) || '').filter(Boolean).join(' ');
+    }
+    return typeof data.message === 'string' ? data.message : '';
+  }
+
   form.addEventListener('input', (event) => {
     event.target.classList.remove('is-invalid');
     if (errorBox) errorBox.hidden = true;
@@ -57,7 +83,6 @@ const FORMSPREE_ENDPOINT = ''; // es. 'https://formspree.io/f/xyzabcd'
     if (busy) return;
     reset();
 
-    // native validation first (name + contact are required fields)
     if (typeof form.checkValidity === 'function' && !form.checkValidity()) {
       form.querySelectorAll(':invalid').forEach((el) => el.classList.add('is-invalid'));
       form.reportValidity();
@@ -66,8 +91,8 @@ const FORMSPREE_ENDPOINT = ''; // es. 'https://formspree.io/f/xyzabcd'
     }
 
     if (!isConfigured()) {
-      console.warn('[form] endpoint Formspree non configurato: imposta action="https://formspree.io/f/<id>" in index.html');
-      show('error', 'Form non ancora collegato: aggiungi il tuo id Formspree nell’attributo action del form.');
+      console.warn('[form] endpoint non configurato: aggiungi la tua access key (Web3Forms) o il tuo id (Formspree) nel form di index.html');
+      show('error', 'Form non ancora collegato: aggiungi la tua access key nell’attributo action / campo access_key del form.');
       return;
     }
 
@@ -84,18 +109,18 @@ const FORMSPREE_ENDPOINT = ''; // es. 'https://formspree.io/f/xyzabcd'
       });
       const data = await response.json().catch(() => ({}));
 
-      if (response.ok) {
+      // Web3Forms risponde 200 anche in caso di errore: conta il flag `success`.
+      const ok = provider === 'web3forms' ? data.success === true : response.ok;
+
+      if (ok) {
         form.reset();
         show('success', form.dataset.successMessage || undefined);
       } else {
-        const detail = Array.isArray(data.errors) && data.errors.length
-          ? data.errors.map((e) => e.message || e.field).join(' ')
-          : '';
-        show('error', detail || form.dataset.errorMessage || defaultError);
+        show('error', messageFrom(data) || form.dataset.errorMessage || defaultError);
       }
     } catch (err) {
-      const offline = err && err.name === 'AbortError' ? 'Request timed out. ' : '';
-      show('error', offline + (form.dataset.errorMessage || defaultError));
+      const timeoutMsg = err && err.name === 'AbortError' ? 'Request timed out. ' : '';
+      show('error', timeoutMsg + (form.dataset.errorMessage || defaultError));
     } finally {
       clearTimeout(timeout);
       setBusy(false);

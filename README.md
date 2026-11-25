@@ -16,7 +16,7 @@ SalonM5/
 │   ├── css/
 │   │   ├── sections.css       # CSS delle sezioni/tema
 │   │   └── app.css            # aggiunte: stati del form, helper a11y
-│   ├── js/form.js             # invio del form a Formspree (fetch + stati)
+│   ├── js/form.js             # invio del form a Web3Forms (fetch + stati)
 │   ├── dropdown/              # navbar dropdown
 │   ├── fonts/                 # font self-hosted (Bricolage Grotesque 800, Golos Text 400/500/600)
 │   ├── images/                # foto del sito (jpg) + logo
@@ -40,32 +40,51 @@ npx serve .
 
 Requisiti: Node.js 18+ (solo per il dev server; la pagina in sé non ne ha bisogno).
 
-## Form di prenotazione → Formspree
+## Form di prenotazione → Web3Forms
 
-Il form `#booking` (sezione "Ask for a chair") invia a **Formspree**.
+Il form `#booking` (sezione "Ask for a chair") invia a **Web3Forms**: gratuito fino a
+250 messaggi/mese, nessun account, nessun backend.
 
-1. Crea un form gratuito su <https://formspree.io> e copia l'endpoint
-   (formato `https://formspree.io/f/xxxxxxxx`).
-2. In `index.html` sostituisci il placeholder nell'attributo `action`:
+1. Vai su <https://web3forms.com>, inserisci l'email che deve ricevere le prenotazioni
+   e copia l'**Access Key** che ti arriva (formato UUID).
+2. In `index.html` sostituisci il placeholder nel campo nascosto:
 
    ```html
-   <form id="booking" action="https://formspree.io/f/REPLACE_WITH_FORM_ID" method="POST" ...>
+   <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
    ```
 
-   In alternativa puoi mettere l'URL in `assets/js/form.js` nella costante
-   `FORMSPREE_ENDPOINT` (ha la precedenza sull'`action`).
-3. Il form aggiunge automaticamente: `_subject`, campo `source` e honeypot `_gotcha`.
-   Le email arrivano all'indirizzo collegato al form su Formspree.
+3. Fatto. Il primo invio di prova conferma il collegamento.
 
-Come funziona l'invio:
+Dettagli dell'invio (`assets/js/form.js`):
 
 - validazione nativa dei campi obbligatori (nome, telefono/email);
-- `fetch` AJAX verso Formspree con `Accept: application/json` (niente redirect);
-- messaggi di successo/errore in pagina, bottone in stato "Sending…", timeout 15s;
-- se JavaScript è disattivato il form fa comunque un POST classico a Formspree.
+- `fetch` AJAX a `https://api.web3forms.com/submit` con `Accept: application/json`
+  (niente redirect), timeout 15s;
+- Web3Forms risponde `200` anche in caso di errore: lo script legge il flag `success`
+  e mostra il `message` del provider (es. "Invalid access key provided");
+- bottone in stato "Sending…", alert di successo/errore in pagina, form resettato;
+- honeypot `botcheck` + campi `subject`, `from_name`, `source`;
+- se JavaScript è disattivato il form fa comunque un POST classico a Web3Forms.
 
-Finché l'endpoint non è configurato, l'invio mostra un avviso in pagina con le istruzioni
-invece di fallire silenziosamente.
+Finché la key non è configurata, l'invio mostra un avviso in pagina invece di fallire
+in silenzio.
+
+### Alternative gratuite
+
+Lo script è provider-agnostico: basta cambiare l'`action` (e i campi nascosti) per usare
+un altro servizio.
+
+| Servizio | Piano free | Account | Note |
+|---|---|---|---|
+| **Web3Forms** (default) | 250 msg/mese | solo email per la key | API JSON, risposta `success`, honeypot |
+| Formspree | 50 msg/mese | sì | `POST https://formspree.io/f/<id>`, redirect o AJAX |
+| FormSubmit.co | gratuito, senza quota dichiarata | no (conferma email) | nessuna key: `https://formsubmit.co/<email>` |
+| Getform | 50 msg/mese | sì | simile a Formspree |
+| Basin | 100 msg/mese | sì | ottimo anti-spam |
+| Netlify Forms | 100 msg/mese | — | funziona **solo** su hosting Netlify, non su GitHub Pages |
+
+Per tornare a Formspree: `action="https://formspree.io/f/<id>"`, `data-provider="formspree"`
+e rimuovi il campo `access_key`.
 
 ## Deploy
 
