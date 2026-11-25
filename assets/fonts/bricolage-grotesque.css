@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: normal;
+  font-display: swap;
+  src: url(files/bricolage-grotesque-800.ttf) format('truetype');
+}

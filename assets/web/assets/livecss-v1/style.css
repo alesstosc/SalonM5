@@ -1,0 +1,57 @@
+@property --lc-m-live { syntax: "<integer>"; inherits: true; initial-value: 0; }
+@property --lc-m-seen { syntax: "<integer>"; inherits: true; initial-value: 0; }
+@property --lc-state { syntax: "<integer>"; inherits: true; initial-value: 0; }
+
+@property --lc-len-1 { syntax: "<length-percentage>"; inherits: true; initial-value: 0px; }
+@property --lc-len-2 { syntax: "<length-percentage>"; inherits: true; initial-value: 0px; }
+@property --lc-len-3 { syntax: "<length-percentage>"; inherits: true; initial-value: 0px; }
+@property --lc-len-4 { syntax: "<length-percentage>"; inherits: true; initial-value: 0px; }
+@property --lc-num-1 { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --lc-num-2 { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --lc-num-3 { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --lc-num-4 { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --lc-num-5 { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --lc-num-6 { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --lc-num-7 { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --lc-num-8 { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --lc-angle-1 { syntax: "<angle>"; inherits: true; initial-value: 0deg; }
+@property --lc-angle-2 { syntax: "<angle>"; inherits: true; initial-value: 0deg; }
+@property --lc-int-1 { syntax: "<integer>"; inherits: true; initial-value: 0; }
+@property --lc-int-2 { syntax: "<integer>"; inherits: true; initial-value: 0; }
+
+*:where([data-lc-v1], [data-lc-v1] *), *:where([data-lc-v1], [data-lc-v1] *)::before, *:where([data-lc-v1], [data-lc-v1] *)::after { box-sizing: border-box; }
+:is(h1, h2, h3, h4, p, figure, blockquote, ol, ul, dl, dd):where([data-lc-v1], [data-lc-v1] *) { margin: 0; }
+:is(h1, h2, h3, h4):where([data-lc-v1], [data-lc-v1] *) { font: inherit; }
+:is(ol, ul):where([data-lc-v1], [data-lc-v1] *) { padding: 0; list-style: none; }
+img:where([data-lc-v1], [data-lc-v1] *) { display: block; max-width: 100%; height: auto; }
+a:where([data-lc-v1], [data-lc-v1] *) { color: inherit; }
+:is(button, input):where([data-lc-v1], [data-lc-v1] *) { font: inherit; color: inherit; }
+:is(span, a):where([data-lc-v1], [data-lc-v1] *) { line-height: inherit; font-weight: inherit; }
+.visually-hidden:where([data-lc-v1], [data-lc-v1] *) { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.mbr-fullscreen > *:where([data-lc-v1], [data-lc-v1] *) { width: 100%; }
+:focus-visible:where([data-lc-v1], [data-lc-v1] *) { outline: 3px solid currentColor; outline-offset: 3px; }
+[data-lc-section]:where([data-lc-v1], [data-lc-v1] *) { scroll-margin-top: var(--lc-nav-offset, 88px); }
+
+:where([data-lc-v1]) { overflow-x: clip; --l-screen: 100vh; }
+@supports (height: 100svh) { :where([data-lc-v1]) { --l-screen: 100svh; } }
+body.scaled [data-lc-v1] { --l-screen: 20vh; }
+@media (min-width: 1441px) { body.scaled [data-lc-v1] { --l-screen: 40vh; } }
+
+:where([data-lc-v1], [data-lc-v1] *) {
+  --lc-live-on: ; --lc-live-off: initial;
+  --lc-seen-on: ; --lc-seen-off: initial;
+  --lc-state-on: ; --lc-state-off: initial;
+}
+
+@supports (animation-timeline: view()) {
+@media (prefers-reduced-motion: no-preference) {
+  [data-lc-live]:where([data-lc-v1], [data-lc-v1] *) { animation: lc-m-live linear; animation-timeline: view(); animation-range: cover 0% cover calc(100% - 1px); }
+  @container style(--lc-m-live: 1) { :where([data-lc-v1], [data-lc-v1] *) { --lc-live-on: initial; --lc-live-off: ; } }
+  @container style(--lc-m-seen: 1) { :where([data-lc-v1], [data-lc-v1] *) { --lc-seen-on: initial; --lc-seen-off: ; } }
+  @container style(--lc-state: 1) { :where([data-lc-v1], [data-lc-v1] *) { --lc-state-on: initial; --lc-state-off: ; } }
+    @container style(--lc-m-live: 0) { [data-lc-timed]:is([data-lc-live] [data-lc-loop], [data-lc-live] [data-lc-loop] *):where([data-lc-v1], [data-lc-v1] *) { animation-play-state: paused !important; } }
+}
+}
+
+@keyframes lc-m-live { from, to { --lc-m-live: 1; } }
+@keyframes lc-m-seen { from, to { --lc-m-seen: 1; } }

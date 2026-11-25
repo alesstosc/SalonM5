@@ -1,0 +1,13 @@
+{
+  "name": "salonm5",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static clone of the Mobirise SalonM5 one-page template",
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "dev": "node scripts/serve.mjs"
+  },
+  "keywords": ["mobirise", "template", "salon", "static-site"],
+  "license": "UNLICENSED"
+}
