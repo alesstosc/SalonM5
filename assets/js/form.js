@@ -44,7 +44,7 @@ const ENDPOINT_OVERRIDE = ''; // es. 'https://api.web3forms.com/submit'
     if (!button) return;
     button.disabled = state;
     button.classList.toggle('is-busy', state);
-    button.textContent = state ? 'Sending…' : submitLabel;
+    button.textContent = state ? 'Invio…' : submitLabel;
     button.setAttribute('aria-busy', state ? 'true' : 'false');
   }
 

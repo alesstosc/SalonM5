@@ -3,6 +3,9 @@
 Sito statico one-page per un salone di parrucchieri ("Mèche Rouge"): hero, menu e prezzi,
 "The five checks", stylists, gallery "Looks", chair six, form di prenotazione e footer.
 
+Il sito è **interamente in italiano**: titoli, testi, listino, nomi degli stili, form,
+messaggi di successo/errore, `lang="it"`, meta description e testi alternativi delle immagini.
+
 Nessuna build, nessun `node_modules`: solo HTML, CSS e JS. Si apre `index.html` dal disco
 oppure si serve in locale.
 
