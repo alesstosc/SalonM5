@@ -1,0 +1,44 @@
+/* SalonM5 — app level additions (form states, a11y helpers) */
+
+[hidden] {
+  display: none !important;
+}
+
+/* honeypot: invisible to humans, still posted to Formspree */
+.bk-honeypot {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* status messages of the booking form */
+.bk-alerts .alert {
+  margin-bottom: 0.75rem;
+}
+
+.bk-alerts .alert-success,
+.bk-alerts .alert-danger {
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+}
+
+/* submit button states */
+.bk-submit .btn.is-busy {
+  opacity: 0.55;
+  cursor: progress;
+  pointer-events: none;
+}
+
+.bk-submit .btn[disabled] {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+/* invalid fields keep the template look, only the underline turns red */
+.bk-field .form-control.is-invalid {
+  border-color: #d02c1f;
+  outline-color: #d02c1f;
+}

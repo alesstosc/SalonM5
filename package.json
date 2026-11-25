@@ -2,12 +2,19 @@
   "name": "salonm5",
   "version": "1.0.0",
   "private": true,
-  "description": "Static clone of the Mobirise SalonM5 one-page template",
+  "description": "SalonM5 — static one-page website for a hair salon, with a Formspree booking form",
   "type": "module",
   "scripts": {
     "start": "node scripts/serve.mjs",
     "dev": "node scripts/serve.mjs"
   },
-  "keywords": ["mobirise", "template", "salon", "static-site"],
+  "keywords": [
+    "salon",
+    "hairdresser",
+    "static-site",
+    "formspree",
+    "booking-form",
+    "bootstrap"
+  ],
   "license": "UNLICENSED"
 }
